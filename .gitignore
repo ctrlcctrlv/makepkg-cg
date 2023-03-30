@@ -1,0 +1,4 @@
+.git
+*.o
+*.skel.h
+*.tar.gz

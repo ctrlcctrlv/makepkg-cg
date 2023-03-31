@@ -22,6 +22,25 @@ reasonable limits.
 Follow the instructions in the dist/arch/PKGBUILD file to build and install the
 makepkg-cg package.
 
+### Configuring `session.slice`
+
+It is recommended to also increase the priority of `session.slice` to see the
+most benefit to system stability:
+
+```diff
+diff --git a/usr/lib/systemd/user/session.slice b/usr/lib/systemd/user/session.slice
+index aa12b7d..1a96695 100644
+--- a/usr/lib/systemd/user/session.slice
++++ b/usr/lib/systemd/user/session.slice
+@@ -12,4 +12,5 @@ Description=User Core Session Slice
+ Documentation=man:systemd.special(7)
+ 
+ [Slice]
+-CPUWeight=100
++CPUWeight=1000
++IOWeight=1000
+```
+
 ## Configuration
 
 makepkg-cg provides a default configuration file located at doc/makepkg-cg.conf.

@@ -22,6 +22,7 @@ package() {
 
   # CFLAGS="" make
   
+  install -Dm644 inner.sh "${pkgdir}/usr/share/makepkg-cg/inner.sh"
   # Install the makepkg-cg script
   install -Dm755 makepkg-cg "${pkgdir}/usr/bin/makepkg-cg"
   

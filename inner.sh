@@ -50,7 +50,7 @@ makepkg-cg() {
         #--property="IPIngressFilterPath=${EBPF_PROGRAM_PATH}" \
         #--property="IPEgressFilterPath=${EBPF_PROGRAM_PATH}" \
     wait $!
-    [ $DEBUG -eq 0 ] && systemd --user stop "$SLICE_NAME"
+    [ $DEBUG -eq 0 ] && systemctl --user stop "$SLICE_NAME"
     [ $DEBUG -eq 0 ] && set +x
 }
 

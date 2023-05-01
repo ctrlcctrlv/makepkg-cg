@@ -46,10 +46,9 @@ makepkg-cg() {
         --property="MemorySwapMax=${SWAP_MAX}" \
         --property="IOSchedulingClass=${IO_CLASS}" \
         --property="IOSchedulingPriority=${IO_LEVEL}" \
-        makepkg "$@"
+        $MAKEPKG_CG_PROGRAM "$@" &
         #--property="IPIngressFilterPath=${EBPF_PROGRAM_PATH}" \
         #--property="IPEgressFilterPath=${EBPF_PROGRAM_PATH}" \
 }
 
-makepkg-cg $@
 ## vim: ts=4 et sw=4 syntax=bash

@@ -15,6 +15,9 @@ makepkg-cg() {
     local IO_CLASS=idle
     local SWAP_MAX=0
 
+    # Debug?
+    local DEBUG=0
+
     # Set default eBPF program path
     # TODO: Fix this.
     # local EBPF_PROGRAM_PATH="/usr/share/makepkg-cg/makepkg_cg_prio.bpf.o"
@@ -24,6 +27,8 @@ makepkg-cg() {
     if [[ -f "${CONFIG_FILE}" ]]; then
         source "${CONFIG_FILE}"
     fi
+
+    [ $DEBUG -eq 1 ] && set -x
 
 	# Prepare arguments for makepkg
 	local MAKEPKG_ARGS="${@}"

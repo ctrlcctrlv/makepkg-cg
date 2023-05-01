@@ -1,0 +1,3 @@
+[submodule "dist/arch"]
+	path = dist/arch
+	url = https://aur.archlinux.org/packages/makepkg-cg

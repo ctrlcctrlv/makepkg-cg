@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Set default resource limits (see doc/makepkg-cg.conf)
+CPU_PERCENT="66%"
+CPU_POLICY=idle
+RAM_PERCENT="75%"
+RAM_MAX="90%"
+IO_LEVEL="7"
+IO_CLASS=idle
+SWAP_MAX=0
+
+# Set default eBPF program path
+# TODO: Fix this.
+# EBPF_PROGRAM_PATH="/usr/share/makepkg-cg/makepkg_cg_prio.bpf.o"
+
+# Load custom limits and eBPF program path from a configuration file
+CONFIG_FILE="${HOME}/.config/makepkg-cg.conf"
+if [[ -f "${CONFIG_FILE}" ]]; then
+    source "${CONFIG_FILE}"
+fi
+
+# Prepare arguments for makepkg
+MAKEPKG_ARGS="${@}"
+ESCAPED_MAKEPKG_ARGS=$(printf '%q ' "${MAKEPKG_ARGS[@]}")
+
+# Build the Docker image
+docker build -t makepkg-cg - <<EOF
+FROM archlinux:latest
+
+RUN pacman -Syu --noconfirm \
+    && pacman -S --noconfirm systemd \
+    && rm -rf /var/cache/pacman/pkg/*
+
+# Create a non-root user for running makepkg
+RUN useradd -m -G wheel makepkg \
+    && echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+CMD ["/usr/bin/systemd"]
+EOF
+
+# Run makepkg-cg inside a transient slice using systemd-run
+systemd-run --user --slice="makepkg-cg.slice" \
+    --wait --send-sighup --same-dir --pty \
+    --property="CPUSchedulingPolicy=${CPU_POLICY}" \
+    --property="CPUQuota=${CPU_PERCENT}" \
+    --property="MemoryHigh=${RAM_PERCENT}" \
+    --property="MemoryMax=${RAM_MAX}" \
+    --property="MemorySwapMax=${SWAP_MAX}" \
+    --property="IOSchedulingClass=${IO_CLASS}" \
+    --property="IOSchedulingPriority=${IO_LEVEL}" \
+    --property="DeviceAllow=/dev/null rw" \
+    --property="DeviceAllow=/dev/full rw" \
+    --property="DeviceAllow=/dev/zero rw" \
+    --property="DeviceAllow=/dev/random rw" \
+    --property="DeviceAllow=/dev/urandom rw" \
+    --property="DeviceAllow=/dev/tty rw" \
+    /usr/bin/docker run --rm --privileged --cap-add=SYS_ADMIN \
+        -v "$(pwd)":/build \
+        -v "${HOME}/.config/makepkg-cg.conf:/root/.config/makepkg-cg.conf" \
+	--user makepkg \
+	makepkg-cg \
+        bash -c "cd /build && makepkg ${ESCAPED_MAKEPKG_ARGS}"

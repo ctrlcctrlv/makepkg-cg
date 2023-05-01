@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# makepkg-cg: A makepkg wrapper using Control Groups via systemd.resource-control
+
+MAKEPKG_CG_PROGRAM=makechrootpkg
+
+source /usr/share/makepkg-cg/inner.sh
+
+makepkg-cg $@
+## vim: ts=4 et sw=4 syntax=bash

@@ -49,6 +49,9 @@ makepkg-cg() {
         $MAKEPKG_CG_PROGRAM "$@" &
         #--property="IPIngressFilterPath=${EBPF_PROGRAM_PATH}" \
         #--property="IPEgressFilterPath=${EBPF_PROGRAM_PATH}" \
+    wait $!
+    [ $DEBUG -eq 0 ] && systemd --user stop "$SLICE_NAME"
+    [ $DEBUG -eq 0 ] && set +x
 }
 
 ## vim: ts=4 et sw=4 syntax=bash

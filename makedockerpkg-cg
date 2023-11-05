@@ -54,9 +54,10 @@ systemd-run --user --slice="makepkg-cg.slice" \
     --property="DeviceAllow=/dev/random rw" \
     --property="DeviceAllow=/dev/urandom rw" \
     --property="DeviceAllow=/dev/tty rw" \
-    /usr/bin/docker run --rm --privileged --cap-add=SYS_ADMIN \
-        -v "$(pwd)":/build \
-        -v "${HOME}/.config/makepkg-cg.conf:/root/.config/makepkg-cg.conf" \
-	--user makepkg \
-	makepkg-cg \
-        bash -c "cd /build && makepkg ${ESCAPED_MAKEPKG_ARGS}"
+        /usr/bin/docker run --rm --privileged --cap-add=SYS_ADMIN \
+            -v "$(pwd)":/build \
+            -v "${HOME}/.config/makepkg-cg.conf:/root/.config/makepkg-cg.conf" \
+        --user makepkg \
+            bash -c "cd /build && makepkg ${ESCAPED_MAKEPKG_ARGS}"
+
+# vim: set ts=4 sw=4 et:

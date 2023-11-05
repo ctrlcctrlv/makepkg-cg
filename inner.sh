@@ -38,7 +38,7 @@ makepkg-cg() {
     local SLICE_NAME="makepkg-cg-${USER_ID}-$(date +%s%N).slice"
     >&2 echo "Running slice: $SLICE_NAME"
     systemd-run --user --slice "${SLICE_NAME}" \
-        -E GNUPGHOME="$GNUPGHOME" \
+        $(for key in "${MAKEPKG_ENV[@]}"; do local value="${MAKEPKG_ENV[$key]}"; echo -n "--setenv=$key=$value "; done) \
         --wait --send-sighup --same-dir --pty --service-type=exec \
         --property="CPUSchedulingPolicy=${CPU_POLICY}" \
         --property="CPUQuota=${CPU_PERCENT}" \

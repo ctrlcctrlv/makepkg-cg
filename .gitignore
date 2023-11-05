@@ -2,3 +2,5 @@
 *.o
 *.skel.h
 *.tar.gz
+**/*.tar.gz
+{,**/}dist/arch/{src,pkg}

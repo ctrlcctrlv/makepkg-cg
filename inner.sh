@@ -32,13 +32,18 @@ makepkg-cg() {
 
     # Prepare arguments for makepkg
     local MAKEPKG_ARGS="${@}"
-    local ESCAPED_MAKEPKG_ARGS=$(printf '%q ' "${MAKEPKG_ARGS[@]}")
+    local ESCAPED_MAKEPKG_ARGS=$(printf '%q %q ' "${0%%-cg}" "${MAKEPKG_ARGS[@]}")
 
     # Create a transient .slice unit for this invocation of makepkg-cg
     local SLICE_NAME="makepkg-cg-${USER_ID}-$(date +%s%N).slice"
-    >&2 echo "Running slice: $SLICE_NAME"
+    # Echo to user…
+    local LOGENTRY="Running slice: $SLICE_NAME — $ESCAPED_MAKEPKG_ARGS"
+    >&2 echo $LOGENTRY
+    # …and to syslog
+    command -v logger >/dev/null && \
+        logger -t makepkg-cg -- $LOGENTRY
     systemd-run --user --slice "${SLICE_NAME}" \
-        -E GNUPGHOME="$GNUPGHOME" \
+        $(for key in "${MAKEPKG_ENV[@]}"; do local value="${MAKEPKG_ENV[$key]}"; echo -n "--setenv=$key=$value "; done) \
         --wait --send-sighup --same-dir --pty --service-type=exec \
         --property="CPUSchedulingPolicy=${CPU_POLICY}" \
         --property="CPUQuota=${CPU_PERCENT}" \
@@ -47,7 +52,7 @@ makepkg-cg() {
         --property="MemorySwapMax=${SWAP_MAX}" \
         --property="IOSchedulingClass=${IO_CLASS}" \
         --property="IOSchedulingPriority=${IO_LEVEL}" \
-        $MAKEPKG_CG_PROGRAM "$@" &
+        ${ESCAPED_MAKEPKG_ARGS} \
         #--property="IPIngressFilterPath=${EBPF_PROGRAM_PATH}" \
         #--property="IPEgressFilterPath=${EBPF_PROGRAM_PATH}" \
     wait $!

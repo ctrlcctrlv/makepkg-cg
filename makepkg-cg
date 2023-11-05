@@ -1,10 +1,15 @@
 #!/bin/bash
 
-# makepkg-cg: A makepkg wrapper using Control Groups via systemd.resource-control
+# makepkg-cg 0.2.2: A makepkg wrapper using Control Groups via systemd.resource-control
 
-MAKEPKG_CG_PROGRAM=makepkg
+declare -g -r -x MAKEPKG_CG_VERSION="0.2.2"
+declare -g -x MAKEPKG_CG_PROGRAM="${PROGNAME}"
+declare -g -x MAKEPKG_CG_INNER="/usr"/share/makepkg-cg/inner.sh
+declare -g -x MAKEPKG_CG_DEBUG="${MAKEPKG_CG_DEBUG:-${DEBUG:-0}}"
 
-source /usr/share/makepkg-cg/inner.sh
+[ "${MAKEPKG_CG_DEBUG}" -eq 1 ] && env | grep MAKEPKG_CG
 
-makepkg-cg $@
+source "${MAKEPKG_CG_INNER}"
+
+makepkg-cg "${@}"
 ## vim: ts=4 et sw=4 syntax=bash

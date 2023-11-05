@@ -30,14 +30,14 @@ makepkg-cg() {
 
     [ $DEBUG -eq 1 ] && set -x
 
-	# Prepare arguments for makepkg
-	local MAKEPKG_ARGS="${@}"
-	local ESCAPED_MAKEPKG_ARGS=$(printf '%q ' "${MAKEPKG_ARGS[@]}")
+    # Prepare arguments for makepkg
+    local MAKEPKG_ARGS="${@}"
+    local ESCAPED_MAKEPKG_ARGS=$(printf '%q ' "${MAKEPKG_ARGS[@]}")
 
-	# Create a transient .slice unit for this invocation of makepkg-cg
-	local SLICE_NAME="makepkg-cg-${USER_ID}-$(date +%s%N).slice"
+    # Create a transient .slice unit for this invocation of makepkg-cg
+    local SLICE_NAME="makepkg-cg-${USER_ID}-$(date +%s%N).slice"
     >&2 echo "Running slice: $SLICE_NAME"
-	systemd-run --user --slice "${SLICE_NAME}" \
+    systemd-run --user --slice "${SLICE_NAME}" \
         -E GNUPGHOME="$GNUPGHOME" \
         --wait --send-sighup --same-dir --pty --service-type=exec \
         --property="CPUSchedulingPolicy=${CPU_POLICY}" \

@@ -32,7 +32,7 @@ makepkg-cg() {
 
     # Prepare arguments for makepkg
     local MAKEPKG_ARGS="${@}"
-    local ESCAPED_MAKEPKG_ARGS=$(printf '%q %q ' "${0%%-cg}" "${MAKEPKG_ARGS[@]}")
+    local ESCAPED_MAKEPKG_ARGS=$(printf '%q %s ' "${0%%-cg}" "${MAKEPKG_ARGS[@]}")
 
     # Create a transient .slice unit for this invocation of makepkg-cg
     local SLICE_NAME="makepkg-cg-${USER_ID}-$(date +%s%N).slice"

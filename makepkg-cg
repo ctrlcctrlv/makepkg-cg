@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# makepkg-cg 0.2.2: A makepkg wrapper using Control Groups via systemd.resource-control
+# makepkg-cg 0.2.3: A makepkg wrapper using Control Groups via systemd.resource-control
 
-declare -g -r -x MAKEPKG_CG_VERSION="0.2.2"
+declare -g -r -x MAKEPKG_CG_VERSION="0.2.3"
 declare -g -x MAKEPKG_CG_PROGRAM="${PROGNAME}"
 declare -g -x MAKEPKG_CG_INNER="/usr"/share/makepkg-cg/inner.sh
 declare -g -x MAKEPKG_CG_DEBUG="${MAKEPKG_CG_DEBUG:-${DEBUG:-0}}"

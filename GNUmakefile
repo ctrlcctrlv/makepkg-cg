@@ -1,4 +1,4 @@
-VERSION:=0.2.2
+VERSION:=0.2.3
 PREFIX:=/usr
 INPUTS:=templates/makepkg-cg.in
 OUTS:=makepkg-cg makechrootpkg-cg
